@@ -122,8 +122,66 @@ public class RentalController {
 
 
     @PutMapping("/{id}") // MAJ UN RENTAL
-    public ResponseEntity<Rental> updateRental(@PathVariable Long id, @RequestBody Rental updatedRental) {
-        Rental rental = rentalService.updateRental(id, updatedRental);
-        return ResponseEntity.ok(rental); // Retourne un statut 200 avec les détails de la location mise à jour
+    public ResponseEntity<?> updateRental(
+            @PathVariable Long id,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "surface", required = false) BigDecimal surface,
+            @RequestParam(value = "price", required = false) BigDecimal price,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "picture", required = false) MultipartFile picture,
+            HttpServletRequest request) {
+
+        try {
+            // Extraire le JWT depuis la requête
+            String jwt = this.authTokenFilter.parseJwt(request);
+            if (jwt == null || !jwtUtils.validateJwtToken(jwt)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or missing token.");
+            }
+
+            // Extraire l'email de l'utilisateur depuis le JWT
+            String userEmail = jwtUtils.getUserNameFromJwtToken(jwt);
+            Optional<User> user = this.userRepository.findByEmail(userEmail);
+            if (user.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+            }
+
+            // Rechercher le Rental par son ID
+            Optional<Rental> existingRental = rentalService.getRentalById(id);
+            if (existingRental.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Rental not found.");
+            }
+
+            Rental rental = existingRental.get();
+
+            // Vérifier que l'utilisateur authentifié est bien le propriétaire du Rental
+            if (!rental.getOwnerId().equals(user.get().getId())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only update your own rentals.");
+            }
+
+            // Mettre à jour les champs du Rental si des valeurs sont fournies
+            if (name != null) rental.setName(name);
+            if (surface != null) rental.setSurface(surface);
+            if (price != null) rental.setPrice(price);
+            if (description != null) rental.setDescription(description);
+
+            // Gérer la mise à jour de l'image
+            if (picture != null && !picture.isEmpty()) {
+                String picturePath = fileStorageService.saveFile(picture);
+                rental.setPicture(picturePath);
+            }
+
+            // Sauvegarder le Rental mis à jour
+            Rental updatedRental = rentalService.updateRental(id, rental);
+
+            // Retourner le Rental mis à jour
+            return ResponseEntity.ok(updatedRental);
+
+        } catch (Exception e) {
+            // Log détaillé de l'exception pour le débogage
+            logger.error("Erreur lors de la mise à jour du rental : ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred: " + e.getMessage());
+        }
     }
+
 }
