@@ -17,7 +17,7 @@ public class Rental {
     // ATTRIBUTS PRIVES DONC UNIQUEMENT DIRECTEMENT ACCESSIBLE DANS CETTE CLASSE
     @Id // cette annotation permet à l'attibut id d'être une clé primaire
     @GeneratedValue(strategy = GenerationType.IDENTITY) //  valeur de id sera générée automatiquement via la stratégie d'incrémentation propre au SGBD
-    private Integer id;
+    private Long id;
 
     @NotBlank // Validation au niveau de l'app d'un champ obligatoire (non null ou vide)
     @Size(max = 255) // Validation au niveau de l'app d'un longueur maximale pr le champ
@@ -65,11 +65,11 @@ public class Rental {
     }
 
     // GETTERS & SETTERS
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

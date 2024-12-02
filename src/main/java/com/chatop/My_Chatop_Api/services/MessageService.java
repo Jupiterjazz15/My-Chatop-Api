@@ -29,11 +29,6 @@ public class MessageService {
         return messageRepository.findByRentalId(rentalId);
     }
 
-    // Méthode pour récupérer tous les messages non lus d'un utilisateur
-    public List<Message> getUnreadMessagesForUser(Long userId) {
-        return messageRepository.findByUserIdAndReadStatusFalse(userId);
-    }
-
     // Méthode pour récupérer tous les messages d'un utilisateur
     public List<Message> getMessagesByUserId(Long userId) {
         return messageRepository.findByUserId(userId);

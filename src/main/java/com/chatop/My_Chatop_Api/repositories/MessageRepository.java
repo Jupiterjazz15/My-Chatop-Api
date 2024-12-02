@@ -18,7 +18,4 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     // Trouver un message par son ID
     Message findById(long id);
 
-    // Trouver les messages non lus pour un utilisateur
-    List<Message> findByUserIdAndReadStatusFalse(Long userId);
-
 }
