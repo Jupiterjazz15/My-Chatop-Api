@@ -2,9 +2,9 @@ package com.chatop.My_Chatop_Api.dto;
 
 public class MessageRequest {
 
-    private String message;  // Le contenu du message
-    private Long userId;     // ID de l'utilisateur
-    private Long rentalId;   // ID de la location
+    private String message;
+    private Long userId;
+    private Long rentalId;
 
     // Getter et Setter pour message
     public String getMessage() {

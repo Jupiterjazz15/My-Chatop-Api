@@ -2,23 +2,36 @@ package com.chatop.My_Chatop_Api.security.services;
 
 import org.springframework.stereotype.Service; // annotation indiquant que ce composant Spring est de type service
 import org.springframework.security.core.userdetails.UserDetailsService; // Interface de SSECU utilisée pr récupérer les infos d'un user pr l'authentification
-import com.chatop.My_Chatop_Api.repositories.UserRepository;// interface dont le but est de fournir les opérations nécessaires pour interagir avec DB
+import com.chatop.My_Chatop_Api.repositories.UserRepository; // interface dont le but est de fournir les opérations nécessaires pour interagir avec DB
 import org.springframework.beans.factory.annotation.Autowired; // annotation nécessaire à l'injection de dépendance
 import org.springframework.security.core.userdetails.UserDetails; // interface de SSECU pr représenter les infos d'un user
-import com.chatop.My_Chatop_Api.models.User;// ma classe réprésentant les caractéristiques et les données liées à un user
+import com.chatop.My_Chatop_Api.models.User; // ma classe réprésentant les caractéristiques et les données liées à un user
 import org.springframework.security.core.userdetails.UsernameNotFoundException; // une classe héritant de RuntimeException de SSECU utilisée pr signaler qu'un user n'a pas été trouvé lors de la tentative de récupération de ses infos.
+import com.chatop.My_Chatop_Api.security.jwt.JwtUtils; // Importation de JwtUtils pour gérer l'extraction de l'email
 
 @Service // OVERRIDE DE LA MTHD LOADBYUSERNAME DE SSECU POUR FAIRE UNE RECHERCHE PAR MAIL
 public class UserDetailsServicesImpl implements UserDetailsService {
 
-    @Autowired  // Injection du UR : permet à Spring de fournir une instance de UR
-    UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;  // Injection du UserRepository
+
+    @Autowired
+    private JwtUtils jwtUtils; // Injection de JwtUtils pour gérer le JWT
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email) // cherche l'instance User existante en utilisant la mthd findByEmail() de notre UserRepository
+        // Recherche de l'utilisateur par email
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found with email: " + email));
-        // si instance non trouvée, une instance de UsernameNotFoundException est créée avec le msg spécifié et rien n'est retourné
-        return UserDetailsImpl.build(user); // retourne une instance de UDI grâce l'instance de User trouvée. Possible grâce au constructeur statique de UDI
+        return UserDetailsImpl.build(user); // Construction et retour de l'instance de UserDetailsImpl
+    }
+
+    // Méthode pour récupérer l'utilisateur à partir du JWT
+    public User getUserFromJwt(String jwt) {
+        // Extraire l'email à partir du JWT
+        String email = jwtUtils.getUserNameFromJwtToken(jwt);
+        // Recherche de l'utilisateur par email
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
     }
 }

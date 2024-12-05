@@ -1,12 +1,13 @@
 package com.chatop.My_Chatop_Api.services;
 
 import com.chatop.My_Chatop_Api.models.Message;
+import com.chatop.My_Chatop_Api.models.Rental;
+import com.chatop.My_Chatop_Api.models.User;
 import com.chatop.My_Chatop_Api.repositories.MessageRepository;
+import com.chatop.My_Chatop_Api.repositories.RentalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class MessageService {
@@ -14,23 +15,19 @@ public class MessageService {
     @Autowired
     private MessageRepository messageRepository;
 
-    // Méthode pour créer un message
-    public Message createMessage(Message message) {
+    @Autowired
+    private RentalRepository rentalRepository;
+
+    public Message createMessage(String content, Long rentalId, User user) {
+        Rental rental = rentalRepository.findById(rentalId)
+                .orElseThrow(() -> new RuntimeException("Rental not found"));
+
+        Message message = new Message();
+        message.setMessage(content);
+        message.setUser(user);
+        message.setRental(rental);
+
         return messageRepository.save(message);
     }
-
-    // Méthode pour récupérer un message par son ID
-    public Optional<Message> getMessageById(Long id) {
-        return messageRepository.findById(id);
-    }
-
-    // Méthode pour récupérer tous les messages d'un rentalId
-    public List<Message> getMessagesByRentalId(Long rentalId) {
-        return messageRepository.findByRentalId(rentalId);
-    }
-
-    // Méthode pour récupérer tous les messages d'un utilisateur
-    public List<Message> getMessagesByUserId(Long userId) {
-        return messageRepository.findByUserId(userId);
-    }
 }
+
