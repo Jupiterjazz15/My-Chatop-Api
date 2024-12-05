@@ -16,14 +16,11 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;;
 
-    @ManyToOne
-    @JoinColumn(name = "rental_id", nullable = false)
-    private Rental rental;
-
+    @Column(name = "rental_id", nullable = false)
+    private Long rentalId;
 
     @NotBlank
     @Size(max = 1000)
@@ -39,6 +36,7 @@ public class Message {
     private LocalDateTime updatedAt; // Date de mise à jour du message
 
     // Getters et Setters
+
     public Long getId() {
         return id;
     }
@@ -47,20 +45,20 @@ public class Message {
         this.id = id;
     }
 
-    public Rental getRental() {
-        return rental;
+    public Long getRentalId() {
+        return rentalId;
     }
 
-    public void setRental(Rental rental) {
-        this.rental = rental;
+    public void setRentalId(Long rentalId) {
+        this.rentalId  = rentalId;
     }
 
-    public User getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getMessage() {
