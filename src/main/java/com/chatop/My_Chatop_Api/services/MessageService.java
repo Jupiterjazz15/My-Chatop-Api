@@ -22,17 +22,14 @@ public class MessageService {
     @Autowired
     private RentalRepository rentalRepository;
 
-    public Message createMessage(String content, Long rentalId, Long userId) {
+    public Message createMessage(Long rentalId, Long userId, String content) {
         Rental rental = rentalRepository.findById(rentalId)
                 .orElseThrow(() -> new RuntimeException("Rental not found"));
         // Ajouter cette ligne pour récupérer l'objet User
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Message message = new Message();
-        message.setMessage(content);
-        message.setUserId(userId);
-        message.setRentalId(rentalId);
+        Message message = new Message (rentalId,userId,content);
 
         return messageRepository.save(message);
     }

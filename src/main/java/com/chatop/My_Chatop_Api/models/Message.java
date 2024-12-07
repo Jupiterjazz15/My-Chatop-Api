@@ -16,10 +16,10 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private Long userId;;
 
-    @Column(name = "rental_id", nullable = false)
+    @JoinColumn(name = "rental_id")
     private Long rentalId;
 
     @NotBlank
@@ -35,6 +35,17 @@ public class Message {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt; // Date de mise à jour du message
 
+
+    // CONSTRUCTEUR PAR DEFAUT (requis pour JPA)
+    public Message() {}
+
+    // CONSTRUCTUER AVEC PARAMETRES
+    public Message(Long user_id, Long rental_id, String message) {
+        this.userId = user_id;
+        this.rentalId = rental_id;
+        this.message = message;
+    }
+
     // Getters et Setters
 
     public Long getId() {
@@ -49,16 +60,16 @@ public class Message {
         return rentalId;
     }
 
-    public void setRentalId(Long rentalId) {
-        this.rentalId  = rentalId;
+    public void setRentalId(Long rental_id) {
+        this.rentalId  = rental_id;
     }
 
     public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUserId(Long user_id) {
+        this.userId = user_id;
     }
 
     public String getMessage() {

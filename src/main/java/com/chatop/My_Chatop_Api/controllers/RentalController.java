@@ -66,6 +66,8 @@ public class RentalController {
             @RequestParam(value = "owner_id") Long owner_id,
             HttpServletRequest request) {
 
+        System.out.println("MYNAMEIS" + name + "MYOWNERIDIS" + owner_id);
+
         try {
             // Extraire le JWT depuis la requête
             String jwt = this.authTokenFilter.parseJwt(request);
