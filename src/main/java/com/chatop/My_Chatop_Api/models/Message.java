@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -16,39 +18,33 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JoinColumn(name = "rental_id")
+    private Long rental_id;
 
-    @NotNull
-    @ManyToOne // Relation ManyToOne avec la location
-    @JoinColumn(name = "rental_id", nullable = false)
-    private Rental rental; // Relation vers la location
-
-    @NotNull
-    @ManyToOne // Relation ManyToOne avec l'utilisateur
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user; // Relation vers l'utilisateur
+    @JoinColumn(name = "user_id")
+    private Long user_id;
 
     @NotBlank
     @Size(max = 1000)
     @Column(nullable = false, length = 1000)
     private String message;
 
-    @CreationTimestamp
     @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt; // Date de création du message
+    private LocalDate createdAt; // Date de création du message
 
-    @UpdateTimestamp
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt; // Date de mise à jour du message
+    private LocalDate updatedAt; // Date de mise à jour du message
 
 
     // Constructeur par défaut (requis pour JPA)
     public Message() {}
 
     // Constructeur avec paramètres
-    public Message(User user, Rental rental, String message) {
-        this.user = user;
-        this.rental = rental;
+    public Message(Long rental_id, Long user_id, String message) {
+        this.rental_id = rental_id;
+        this.user_id = user_id;
         this.message = message;
+
     }
 
     // Getters et Setters
@@ -61,20 +57,19 @@ public class Message {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public Long getUserId() {
+        return user_id;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(Long user_id) {
+        this.user_id = user_id;
     }
 
-    public Rental getRental() {
-        return rental;
+    public Long getRentalId() {
+        return rental_id;
     }
-
-    public void setRental(Rental rental) {
-        this.rental = rental;
+    public void setRentalId(Long rental_id) {
+        this.rental_id = rental_id;
     }
 
     public String getMessage() {
@@ -85,19 +80,19 @@ public class Message {
         this.message = message;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public LocalDate getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(LocalDate createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalDateTime getUpdatedAt() {
+    public LocalDate getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
+    public void setUpdatedAt(LocalDate updatedAt) {
         this.updatedAt = updatedAt;
     }
 }
