@@ -34,7 +34,7 @@ public class RentalService {
         Optional<Rental> existingRental = rentalRepository.findById(id);
 
         if (existingRental.isEmpty()) {
-            throw new RuntimeException("Rental not found with id: " + id); // ou une exception personnalisée
+            throw new RuntimeException("Rental not found with id: " + id);
         }
 
         // MAJ les champs de l'objet Rental existant avec les nouvelles données
