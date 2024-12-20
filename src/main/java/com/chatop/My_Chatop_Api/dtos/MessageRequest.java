@@ -1,4 +1,4 @@
-package com.chatop.My_Chatop_Api.dto;
+package com.chatop.My_Chatop_Api.dtos;
 
 public class MessageRequest {
 

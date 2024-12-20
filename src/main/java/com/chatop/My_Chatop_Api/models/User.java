@@ -87,8 +87,15 @@ public class User {
         return created_at;
     }
 
+    public void setCreatedAt(LocalDate created_at) {
+        this.created_at = created_at;
+    }
+
     public LocalDate getUpdatedAt() {
         return updated_at;
+    }
+    public void setUpdatedAt(LocalDate updated_at) {
+        this.updated_at = updated_at;
     }
 
 

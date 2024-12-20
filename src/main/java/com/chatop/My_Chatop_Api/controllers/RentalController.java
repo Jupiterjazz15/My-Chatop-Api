@@ -1,6 +1,6 @@
 package com.chatop.My_Chatop_Api.controllers;
 
-import com.chatop.My_Chatop_Api.dto.RentalRequest;
+import com.chatop.My_Chatop_Api.dtos.RentalRequest;
 import com.chatop.My_Chatop_Api.models.Rental;
 import com.chatop.My_Chatop_Api.models.User;
 import com.chatop.My_Chatop_Api.repositories.UserRepository;

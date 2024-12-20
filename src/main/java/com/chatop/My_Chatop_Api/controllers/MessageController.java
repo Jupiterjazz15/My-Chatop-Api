@@ -1,6 +1,5 @@
 package com.chatop.My_Chatop_Api.controllers;
 
-import com.chatop.My_Chatop_Api.dto.MessageRequest;
 import com.chatop.My_Chatop_Api.models.Message;
 import com.chatop.My_Chatop_Api.models.Rental;
 import com.chatop.My_Chatop_Api.models.User;

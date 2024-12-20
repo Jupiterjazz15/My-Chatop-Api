@@ -1,4 +1,4 @@
-package com.chatop.My_Chatop_Api.dto;
+package com.chatop.My_Chatop_Api.dtos;
 
 // DTO POUR TRANSPORTER UNE REPONSE CONTENANT UN MSG (expl : une réponse standardisée pr les erreurs ou les succès dans les API) avec un code associé)
 public class MessageResponse {

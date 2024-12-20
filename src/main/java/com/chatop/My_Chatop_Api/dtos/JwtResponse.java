@@ -1,4 +1,4 @@
-package com.chatop.My_Chatop_Api.dto;
+package com.chatop.My_Chatop_Api.dtos;
 
 // DTO POUR TRANSPORTER LE TOKEN UNE FOIS L'AUTHENTIFICATION REUSSIE
 public class JwtResponse {

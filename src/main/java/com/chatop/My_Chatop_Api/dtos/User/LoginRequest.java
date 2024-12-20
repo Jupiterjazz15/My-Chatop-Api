@@ -1,4 +1,4 @@
-package com.chatop.My_Chatop_Api.dto;
+package com.chatop.My_Chatop_Api.dtos.User;
 
 import jakarta.validation.constraints.NotBlank;// Annotation pour spécifier que le champs ne doivent pas être vides
 

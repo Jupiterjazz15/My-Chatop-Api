@@ -1,6 +1,4 @@
-package com.chatop.My_Chatop_Api.dto;
-
-import org.springframework.cglib.core.Local;
+package com.chatop.My_Chatop_Api.dtos.User;
 
 import java.time.LocalDate;
 
