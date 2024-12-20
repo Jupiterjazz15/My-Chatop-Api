@@ -47,11 +47,13 @@ public class JwtUtils {
 
     // MTHD POUR RETOURNER LE MAIL DU CLIENT A PARTIR DE SON TOKEN
     public String getUserNameFromJwtToken(String token) {
-        return Jwts.parserBuilder()// permet de lire et analyser un token JWT pour le transformer de encoded à decocded
+        String userName =  Jwts.parserBuilder()// permet de lire et analyser un token JWT pour le transformer de encoded à decocded
                 .setSigningKey(key())// utilise la clé HMAC pour valider la signature
                 .build().parseClaimsJws(token)// analyse et valide le token
                 .getBody() // une fois le token validé, on extrait les claims pr accéder à la partie playload du token
                 .getSubject();// récupère la valeur associée à la clé "sub" du playload
+        System.out.println("Extracted UserName from JWT: " + userName);
+        return userName;
     }
 
     // MTHD POUR VALIDER LE TOKEN

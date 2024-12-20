@@ -30,6 +30,12 @@ import com.chatop.My_Chatop_Api.dto.SignupRequest;
 import com.chatop.My_Chatop_Api.models.User;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(name = "User Controller", description = "Endpoints for managing users")
 @CrossOrigin(origins = "*", maxAge = 3600) // durée de mise en cache 1h
 @RestController
 @RequestMapping("/api/auth")
@@ -49,8 +55,8 @@ public class UserController {
     HashMap<String, Object> responseMessage = null; // Déclaration et initialisation de la var responseMessage, une HashMap utilisée pr stocker des paires clé [String]-valeur [Object].
     MappingJacksonValue jsonResponse = null; // objet MappingJacksonValue utilisé avec Jackson pr appliquer des règles de sérialisation spécifiques (ex. filtrage, vues) lors de la production d'une réponse JSON.
 
-    // CONSTRUCTEUR PAR DÉFAUT : Nécessaire pr des frameworks comme Jackson
-    public UserController() {
+
+    public UserController() {  // CONSTRUCTEUR PAR DÉFAUT : Nécessaire pr des frameworks comme Jackson
 
         this.authTokenFilter = new AuthTokenFilter();
         this.responseMessage = new HashMap<String, Object>();
@@ -62,7 +68,18 @@ public class UserController {
         // La valeur passée au constructeur est `null`, ce qui signifie que l'objet JSON à mapper n'est pas encore défini.
     }
 
-    @PostMapping("/register") // PERMETTRE UNE PREMIÈRE CONNEXION
+    // PERMETTRE UNE PREMIÈRE CONNEXION
+    @Operation(
+            summary = "Register a new user",
+            description = "Allows a new user to register by providing email, username, and password. Returns a JWT token upon successful registration."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "User registered successfully and JWT token returned"),
+            @ApiResponse(responseCode = "400", description = "Bad request, email already in use or validation error"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+
+    @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         // Renvoie une réponse HTTP personnalisée (ResponseEntity).
         // Elle prend en paramètre un objet `SignupRequest` (envoyé dans le corps de la requête).
@@ -108,7 +125,17 @@ public class UserController {
         return ResponseEntity.ok(new JwtResponse(jwt)); // RETOURNE une réponse HTTP 200 (OK) avec un objet `JwtResponse` contenant le token JWT.
     }
 
-    @PostMapping("/login") // PERMETTRE DE SE CONNECTER
+    // PERMETTRE DE SE CONNECTER PAR LA SUITE
+    @Operation(
+            summary = "Authenticate a user",
+            description = "Authenticate a user by validating their email and password. Returns a JWT token upon successful authentication."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "User authenticated successfully and JWT token returned"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized, invalid email or password"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         // Renvoie une réponse HTTP personnalisée (ResponseEntity).
         // Prend en paramètre un objet `LoginRequest` (envoyé dans le corps de la requête).
@@ -133,7 +160,18 @@ public class UserController {
         return ResponseEntity.ok(new JwtResponse(jwt)); // RETOURNE une réponse HTTP 200 (OK) avec un objet `JwtResponse` contenant le token JWT.
     }
 
-    @GetMapping("/me")// RECUPERER LES INFOS DU USER CONNECTE
+
+    // RECUPERER LES INFOS DU USER CONNECTE
+    @Operation(
+            summary = "Get current authenticated user info",
+            description = "Retrieve the details of the currently authenticated user using their JWT token."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "User details retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized, invalid or missing token"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/me")
     public UserResponse me(HttpServletRequest request) {// Méthode qui renvoie un objet `UserResponse` contenant les détails du user connecté.
 
         Optional<User> user = Optional.empty(); // Variable `user` de type `Optional` cad un conteneur qui peut soit contenir un objet de type User, soit être vide
@@ -160,3 +198,4 @@ public class UserController {
         return userResponse;
     }
 }
+

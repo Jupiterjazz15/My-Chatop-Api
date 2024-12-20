@@ -1,5 +1,6 @@
 package com.chatop.My_Chatop_Api.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore; // annotation Jackson pr exclure certains champs lors de la sérialisation JSON (transfo en JSON)
 import jakarta.persistence.*; // Fournit les annotations JPA pour gérer les interactions avec la DB @Entity, @Table, @Id
 import jakarta.validation.constraints.Email; // Annotation @Email : format valide pour les adresses email
@@ -14,8 +15,7 @@ import java.time.LocalDate;
 @Table(name = "users")
 public class User {
 
-    // ATTRIBUTS PRIVES DONC UNIQUEMENT DIRECTEMENT ACCESSIBLE DANS CETTE CLASSE
-    @Id // cette annotation permet à l'attibut id d'être une clé primaire
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // valeur de id sera générée automatiquement via la stratégie d'incrémentation propre au SGBD
     private Long id;
 
@@ -33,12 +33,13 @@ public class User {
     @JsonIgnore
     private String password;
 
-    @CreationTimestamp
-    @Column(updatable = false) // La valeur ne change pas après la création.
-    private LocalDate createdAt;
+    @Column(name = "created_at", updatable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd")
+    private LocalDate created_at;
 
-    @UpdateTimestamp
-    private LocalDate updatedAt;
+    @Column(name = "updated_at")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd")
+    private LocalDate updated_at;
 
     // CONSTRUCTEUR SANS ARGUMENT : utile pr JPA et les frameworks (Hibernate) pr de créer une instance de la classe
     public User() {}
@@ -50,7 +51,6 @@ public class User {
         this.password = password;
     }
 
-    // GETTERS & SETTERS : permettent de lire ou modifier les attributs privés de la classe"
     public Long getId() {
         return id;
     }
@@ -84,11 +84,11 @@ public class User {
     }
 
     public LocalDate getCreatedAt() {
-        return createdAt;
+        return created_at;
     }
 
     public LocalDate getUpdatedAt() {
-        return updatedAt;
+        return updated_at;
     }
 
 

@@ -2,10 +2,10 @@ package com.chatop.My_Chatop_Api.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -16,11 +16,16 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(name = "user_id")
-    private Long userId;;
 
-    @JoinColumn(name = "rental_id")
-    private Long rentalId;
+    @NotNull
+    @ManyToOne // Relation ManyToOne avec la location
+    @JoinColumn(name = "rental_id", nullable = false)
+    private Rental rental; // Relation vers la location
+
+    @NotNull
+    @ManyToOne // Relation ManyToOne avec l'utilisateur
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user; // Relation vers l'utilisateur
 
     @NotBlank
     @Size(max = 1000)
@@ -36,13 +41,13 @@ public class Message {
     private LocalDateTime updatedAt; // Date de mise à jour du message
 
 
-    // CONSTRUCTEUR PAR DEFAUT (requis pour JPA)
+    // Constructeur par défaut (requis pour JPA)
     public Message() {}
 
-    // CONSTRUCTUER AVEC PARAMETRES
-    public Message(Long user_id, Long rental_id, String message) {
-        this.userId = user_id;
-        this.rentalId = rental_id;
+    // Constructeur avec paramètres
+    public Message(User user, Rental rental, String message) {
+        this.user = user;
+        this.rental = rental;
         this.message = message;
     }
 
@@ -56,20 +61,20 @@ public class Message {
         this.id = id;
     }
 
-    public Long getRentalId() {
-        return rentalId;
+    public User getUser() {
+        return user;
     }
 
-    public void setRentalId(Long rental_id) {
-        this.rentalId  = rental_id;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Rental getRental() {
+        return rental;
     }
 
-    public void setUserId(Long user_id) {
-        this.userId = user_id;
+    public void setRental(Rental rental) {
+        this.rental = rental;
     }
 
     public String getMessage() {
@@ -95,6 +100,4 @@ public class Message {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
-
 }
-

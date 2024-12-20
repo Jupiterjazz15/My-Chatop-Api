@@ -2,20 +2,19 @@ package com.chatop.My_Chatop_Api.dto;
 
 public class MessageRequest {
 
-    private String message;
-    private Long userId;
     private Long rentalId;
+    private Long userId;
+    private String message;
 
-    // Getter et Setter pour message
-    public String getMessage() {
-        return message;
+    // Getters et setters
+    public Long getRentalId() {
+        return rentalId;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setRentalId(Long rentalId) {
+        this.rentalId = rentalId;
     }
 
-    // Getter et Setter pour userId
     public Long getUserId() {
         return userId;
     }
@@ -24,12 +23,11 @@ public class MessageRequest {
         this.userId = userId;
     }
 
-    // Getter et Setter pour rentalId
-    public Long getRentalId() {
-        return rentalId;
+    public String getMessage() {
+        return message;
     }
 
-    public void setRentalId(Long rentalId) {
-        this.rentalId = rentalId;
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

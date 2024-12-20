@@ -1,70 +1,73 @@
 package com.chatop.My_Chatop_Api.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity // cette classe est une entitée JPA = elle sera mappée à une table
 @Table(name = "rentals")
 public class Rental {
 
-    // ATTRIBUTS PRIVES DONC UNIQUEMENT DIRECTEMENT ACCESSIBLE DANS CETTE CLASSE
-    @Id // cette annotation permet à l'attibut id d'être une clé primaire
-    @GeneratedValue(strategy = GenerationType.IDENTITY) //  valeur de id sera générée automatiquement via la stratégie d'incrémentation propre au SGBD
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // génération automatique
     private Long id;
 
-    @NotBlank // Validation au niveau de l'app d'un champ obligatoire (non null ou vide)
-    @Size(max = 255) // Validation au niveau de l'app d'un longueur maximale pr le champ
-    @Column(nullable = false, length = 255) // Contraintes au niveau de la DB
+    @NotBlank
+    @Size(max = 255)
+    @Column(nullable = false, length = 255)
     private String name;
 
-    @DecimalMin(value = "0.0", inclusive = false) // Surface doit être supérieure à 0
-    @Column(nullable = false) // Champ obligatoire
+    @NotNull
+    @DecimalMin(value = "0.0", inclusive = false) // Doit être supérieure à 0
+    @Column(nullable = false)
     private BigDecimal surface;
 
-    @DecimalMin(value = "0.0", inclusive = false) // Prix doit être supérieur à 0
-    @Column(nullable = false) // Champ obligatoire
+    @NotNull
+    @DecimalMin(value = "0.0", inclusive = false)
+    @Column(nullable = false)
     private BigDecimal price;
 
-    @Size(max = 255) // Longueur maximale définie pour l'URL de l'image
+    @Size(max = 255)
     @Column(length = 255)
     private String picture;
 
-    @Size(max = 2000) // Description avec une longueur maximale
+    @Size(max = 2000)
     @Column(length = 2000)
     private String description;
 
-    @Column(name = "owner_id", nullable = false) // ID du propriétaire, obligatoire
-    private Long ownerId;
+    @NotNull
+    @Column(name = "owner_id", nullable = false)
+    private Long owner_id;
 
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false) // Timestamp automatique lors de la création
-    private LocalDateTime createdAt;
+    @Column(name = "created_at", updatable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd")
+    private LocalDate created_at;
 
-    @UpdateTimestamp
-    @Column(name = "updated_at") // Timestamp automatique lors de la modification
-    private LocalDateTime updatedAt;
+    @Column(name = "updated_at")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd")
+    private LocalDate updated_at;;
 
     // CONSTRUCTEUR PAR DEFAUT (requis pour JPA)
     public Rental() {}
 
-    // CONSTRUCTUER AVEC PARAMETRES
+    // CONSTRUCTEUR AVEC PARAMETRES
     public Rental(String name, BigDecimal surface, BigDecimal price, String picture, String description, Long owner_id) {
         this.name = name;
         this.surface = surface;
         this.price = price;
         this.picture = picture;
         this.description = description;
-        this.ownerId = owner_id;
+        this.owner_id = owner_id;
     }
 
-    // GETTERS & SETTERS
     public Long getId() {
         return id;
     }
@@ -114,19 +117,27 @@ public class Rental {
     }
 
     public Long getOwnerId() {
-        return ownerId;
+        return owner_id;
     }
 
     public void setOwnerId(Long owner_id) {
-        this.ownerId = owner_id;
+        this.owner_id = owner_id;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public LocalDate getCreatedAt() {
+        return created_at;
     }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
+    public void setCreatedAt(LocalDate createdAt) {
+        this.created_at = createdAt;
+    }
+
+    public LocalDate getUpdatedAt() {
+        return updated_at;
+    }
+
+    public void setUpdatedAt(LocalDate updatedAt) {
+        this.updated_at = updatedAt;
     }
 
 }

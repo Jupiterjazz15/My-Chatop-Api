@@ -63,10 +63,11 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS).and())
                 // gestion de session STATELESS cad que chaque requête doit inclure les infos nécessaires à l'authentificatio (comme un token JWT) car aucune session côté serveur n'est maintenue.
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/rentals/**").permitAll()
-                        .requestMatchers("/api/messages/**").permitAll()// on peut accéder à ces routes sans authentification
-                        .anyRequest().authenticated() // toutes les autres en ont besoin
+                        .requestMatchers("/api/messages/**").permitAll()
+                        .anyRequest().authenticated()
                 );
 
         http.authenticationProvider(authenticationProvider()); // Ajoute un fournisseur d'authentification personnalisé (DAO codé plus haut)

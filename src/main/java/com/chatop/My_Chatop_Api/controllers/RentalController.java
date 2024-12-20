@@ -1,5 +1,6 @@
 package com.chatop.My_Chatop_Api.controllers;
 
+import com.chatop.My_Chatop_Api.dto.RentalRequest;
 import com.chatop.My_Chatop_Api.models.Rental;
 import com.chatop.My_Chatop_Api.models.User;
 import com.chatop.My_Chatop_Api.repositories.UserRepository;
@@ -11,16 +12,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import jakarta.servlet.http.HttpServletRequest;
+
 import java.math.BigDecimal;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.multipart.MultipartFile;
+
+@Tag(name = "Rental Controller", description = "Endpoints for managing rentals")
 @RestController
 @RequestMapping("/api/rentals")
 public class RentalController {
@@ -38,14 +45,43 @@ public class RentalController {
 
     private static final Logger logger = LoggerFactory.getLogger(RentalController.class);
 
-    @GetMapping("") // RECUPERER TOUTES LES LOCATIONS
+    // RECUPERER TOUTES LES LOCATIONS
+
+    @Operation(summary = "Get all rentals", description = "Returns a list of all rentals")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "List of rentals returned successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+
+    @GetMapping("")
     public ResponseEntity<List<Rental>> getAllRentals() {
+
         List<Rental> rentals = rentalService.getAllRentals();
-        return ResponseEntity.ok(rentals); // Retourne un statut 200 avec la liste des locations
+
+        if (!rentals.isEmpty()) {
+            return ResponseEntity.ok(rentals); // Retourne un statut 200 avec la liste des locations
+        } else {
+            Rental rentalNotFound = new Rental();
+            rentalNotFound.setName("No rentals found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(List.of(rentalNotFound)); // Retourne un 404 avec un message d'erreur
+        }
     }
 
+    // RECUPERER UNE LOCATION VIA SON ID
 
-    @GetMapping("/{id}") // RECUPERER UNE LOCATION VIA SON ID
+    @Operation(
+            summary = "Get a rental by ID",
+            description = "Retrieve a specific rental by its unique ID. Returns 404 if the rental is not found."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Rental retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Rental not found"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/{id}")
+
     public ResponseEntity<Rental> getRentalById(@PathVariable Long id) {
         Optional<Rental> rental = rentalService.getRentalById(id);
 
@@ -56,21 +92,41 @@ public class RentalController {
         }
     }
 
-    @PostMapping("") // CREER UN RENTAL
+
+    // CREER UN RENTAL
+
+    @Operation(
+            summary = "Create a new rental",
+            description = "Create a new rental associated with the authenticated user. The picture parameter is optional."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Rental created successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request, invalid input"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+
+    @PostMapping("")
+
     public ResponseEntity<?> createRental(
-            @RequestParam(value = "name") String name,
-            @RequestParam(value = "surface") BigDecimal surface,
-            @RequestParam(value = "price") BigDecimal price,
-            @RequestParam(value = "description") String description,
+            @RequestParam("name") String name,
+            @RequestParam("surface") BigDecimal surface,
+            @RequestParam("price") BigDecimal price,
+            @RequestParam("description") String description,
             @RequestParam(value = "picture", required = false) MultipartFile picture,
-            @RequestParam(value = "owner_id") Long owner_id,
             HttpServletRequest request) {
 
-        System.out.println("MYNAMEIS" + name + "MYOWNERIDIS" + owner_id);
-
         try {
+            // Log de tous les en-têtes pour vérifier si Authorization est présent
+            Enumeration<String> headers = request.getHeaderNames();
+            while (headers.hasMoreElements()) {
+                String headerName = headers.nextElement();
+                System.out.println("Header: " + headerName + " = " + request.getHeader(headerName));
+            }
+
             // Extraire le JWT depuis la requête
             String jwt = this.authTokenFilter.parseJwt(request);
+
             if (jwt == null || !jwtUtils.validateJwtToken(jwt)) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or missing token.");
             }
@@ -82,16 +138,8 @@ public class RentalController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
             }
 
-            // Vérifier si l'ownerId existe dans la base de données
-            Optional<User> owner = userRepository.findById(owner_id);
-            if (owner.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Owner not found.");
-            }
-
-            // Vérifier que l'utilisateur authentifié correspond à l'ownerId dans la requête
-            if (!user.get().getId().equals(owner_id)) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only create a rental for yourself.");
-            }
+            // Utiliser l'utilisateur trouvé comme le propriétaire du rental
+            User owner = user.get();
 
             // Sauvegarder l'image si présente
             String picturePath = null;
@@ -106,7 +154,7 @@ public class RentalController {
             rental.setPrice(price);
             rental.setDescription(description);
             rental.setPicture(picturePath);
-            rental.setOwnerId(owner_id); // Associer le rental à l'utilisateur authentifié
+            rental.setOwner(owner); // Associer le rental à l'utilisateur authentifié
 
             // Sauvegarder le Rental
             Rental createdRental = rentalService.createRental(rental);
@@ -116,21 +164,34 @@ public class RentalController {
 
         } catch (Exception e) {
             // Log détaillé de l'exception pour le débogage
-            logger.error("Erreur lors de la création du rental : ", e);
+            System.out.println("Erreur lors de la création du rental : ");
+            e.printStackTrace(); // Pour afficher l'exception détaillée dans la console
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("An error occurred: " + e.getMessage());
         }
     }
 
 
-    @PutMapping("/{id}") // MAJ UN RENTAL
+    // MAJ UN RENTAL
+
+    @Operation(
+            summary = "Update an existing rental",
+            description = "Update the details of a rental associated with the authenticated user. All parameters are optional."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Rental updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request, invalid input"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized, invalid or missing token"),
+            @ApiResponse(responseCode = "403", description = "Forbidden, you can only update your own rentals"),
+            @ApiResponse(responseCode = "404", description = "Rental or user not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+
+    @PutMapping("/{id}")
+
     public ResponseEntity<?> updateRental(
             @PathVariable Long id,
-            @RequestParam(value = "name", required = false) String name,
-            @RequestParam(value = "surface", required = false) BigDecimal surface,
-            @RequestParam(value = "price", required = false) BigDecimal price,
-            @RequestParam(value = "description", required = false) String description,
-            @RequestParam(value = "picture", required = false) MultipartFile picture,
+            @ModelAttribute RentalRequest rentalRequest,  // Utilisation de ModelAttribute pour récupérer les données du formulaire
             HttpServletRequest request) {
 
         try {
@@ -156,19 +217,20 @@ public class RentalController {
             Rental rental = existingRental.get();
 
             // Vérifier que l'utilisateur authentifié est bien le propriétaire du Rental
-            if (!rental.getOwnerId().equals(user.get().getId())) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only update your own rentals.");
+            if (!rental.getOwner().getId().equals(user.get().getId())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only update your own rentals!");
             }
 
             // Mettre à jour les champs du Rental si des valeurs sont fournies
-            if (name != null) rental.setName(name);
-            if (surface != null) rental.setSurface(surface);
-            if (price != null) rental.setPrice(price);
-            if (description != null) rental.setDescription(description);
+            if (rentalRequest.getName() != null) rental.setName(rentalRequest.getName());
+            if (rentalRequest.getSurface() != null) rental.setSurface(rentalRequest.getSurface());
+            if (rentalRequest.getPrice() != null) rental.setPrice(rentalRequest.getPrice());
+            if (rentalRequest.getDescription() != null) rental.setDescription(rentalRequest.getDescription());
 
-            // Gérer la mise à jour de l'image
-            if (picture != null && !picture.isEmpty()) {
-                String picturePath = fileStorageService.saveFile(picture);
+            // Sauvegarder l'image si présente
+            String picturePath = null;
+            if (rentalRequest.getPicture() != null && !rentalRequest.getPicture().isEmpty()) {
+                picturePath = fileStorageService.saveFile(rentalRequest.getPicture());
                 rental.setPicture(picturePath);
             }
 
@@ -180,7 +242,8 @@ public class RentalController {
 
         } catch (Exception e) {
             // Log détaillé de l'exception pour le débogage
-            logger.error("Erreur lors de la mise à jour du rental : ", e);
+            System.out.println("Erreur lors de la mise à jour du rental : ");
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("An error occurred: " + e.getMessage());
         }
