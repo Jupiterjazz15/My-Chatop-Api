@@ -18,7 +18,7 @@ public class MessageController {
         this.messageService = messageService;
     }
 
-    @PostMapping("")
+    @PostMapping("/messages")
     public ResponseEntity<Map<String, String>> saveMessage(@Valid @RequestBody MessageRequest message){
         if(messageService.saveMessage(message) != null) {
             return ResponseEntity.ok(Map.of("message", "Message send with success"));

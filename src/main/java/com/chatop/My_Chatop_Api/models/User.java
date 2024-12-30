@@ -21,7 +21,7 @@ public class User {
 
     @NotBlank
     @Size(max = 20)
-    private String username;
+    private String name;
 
     @NotBlank
     @Size(max = 50)
@@ -33,20 +33,22 @@ public class User {
     @JsonIgnore
     private String password;
 
+    @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd")
-    private LocalDate created_at;
+    private LocalDate createdAt;
 
+    @UpdateTimestamp
     @Column(name = "updated_at")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd")
-    private LocalDate updated_at;
+    private LocalDate updatedAt;
 
     // CONSTRUCTEUR SANS ARGUMENT : utile pr JPA et les frameworks (Hibernate) pr de créer une instance de la classe
     public User() {}
 
     // CONSTRUCTEUR CLASSIQUE
-    public User(String username, String email, String password) {
-        this.username = username;
+    public User(String name, String email, String password) {
+        this.name = name;
         this.email = email;
         this.password = password;
     }
@@ -59,12 +61,12 @@ public class User {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getName() {
+        return name;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {
@@ -84,18 +86,18 @@ public class User {
     }
 
     public LocalDate getCreatedAt() {
-        return created_at;
+        return createdAt;
     }
 
     public void setCreatedAt(LocalDate created_at) {
-        this.created_at = created_at;
+        this.createdAt = created_at;
     }
 
     public LocalDate getUpdatedAt() {
-        return updated_at;
+        return updatedAt;
     }
     public void setUpdatedAt(LocalDate updated_at) {
-        this.updated_at = updated_at;
+        this.updatedAt = updated_at;
     }
 
 

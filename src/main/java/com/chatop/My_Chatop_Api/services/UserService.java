@@ -35,7 +35,7 @@ public class UserService {
         }
 
         User user = new User();
-        user.setUsername(signUpRequest.getUsername());
+        user.setName(signUpRequest.getName());
         user.setEmail(signUpRequest.getEmail());
         user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
         user.setCreatedAt(LocalDate.now());
@@ -44,9 +44,11 @@ public class UserService {
     }
 
     public UserResponse getUserByEmail(String email) {
-        // Lever une exception si l'utilisateur n'est pas trouvé
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+        // convert User to UserDto
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            return null;
+        }
 
         // Mapper l'entité User vers le DTO UserResponse
         return modelMapper.map(user, UserResponse.class);

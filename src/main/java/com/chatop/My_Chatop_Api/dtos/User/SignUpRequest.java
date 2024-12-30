@@ -7,7 +7,7 @@ public class SignUpRequest {
     // ATTRIBUTS
     @NotBlank
     @Size(min = 3, max = 20)
-    private String username;
+    private String name;
 
     @NotBlank
     @Size(max = 50)
@@ -19,12 +19,12 @@ public class SignUpRequest {
     private String password;
 
     // GETTERS & SETTERS
-    public String getUsername() {
-        return username;
+    public String getName() {
+        return name;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setnName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {

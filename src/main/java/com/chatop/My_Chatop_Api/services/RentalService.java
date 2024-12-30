@@ -5,6 +5,7 @@ import com.chatop.My_Chatop_Api.dtos.User.UserResponse;
 import com.chatop.My_Chatop_Api.models.Rental;
 import com.chatop.My_Chatop_Api.repositories.RentalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class RentalService {
@@ -69,8 +69,8 @@ public class RentalService {
     }
 
     // MTHD POUR RECUPÉRER UNE LOCATION PAR SON ID (incluse dans l'interface JpaRepo)
-    public Optional<Rental> getRentalById(Long id) {
-        return rentalRepository.findById(id);
+    public Rental getRentalById(Long id) {
+        return rentalRepository.findById(id).orElse(null);
     }
 
     // MTHD POUR CREER UNE LOCATION (incluse dans l'interface JpaRepo)
@@ -80,25 +80,39 @@ public class RentalService {
 
     // MTHD POUR MAJ UNE LOCATION EXISTANTE
     public Rental updateRental(Long id, RentalRequest rentalRequest) throws IOException {
-        Optional<Rental> existingRental = rentalRepository.findById(id);
 
-        if (existingRental.isEmpty()) {
-            throw new RuntimeException("Rental not found with id: " + id);
+        Rental rentalToUpdate =  rentalRepository.findById(id).orElse(null);
+
+        if (rentalToUpdate == null) {
+            return null;
         }
 
-        Rental rental = existingRental.get();
-        rental.setName(rentalRequest.getName());
-        rental.setSurface(rentalRequest.getSurface());
-        rental.setPrice(rentalRequest.getPrice());
-        rental.setDescription(rentalRequest.getDescription());
+//        // Extraire les détails de l'utilisateur
+//        Jwt jwt = (Jwt) authentication.getPrincipal();
+//
+//        String email = jwt.getClaim("email");
+//        // Récupérer l'utilisateur à partir du service
+//        UserResponse user = userService.getUserByEmail(email);
+//
+//        if (!existingRental.getOwnerId().equals(user.getId()) ) {
+//            throw new AccessDeniedException("User is not authorized"); // Lever une exception standard pour retourner 401/403
+//        }
+//
+//        Rental rental = existingRental.get();
+//        rental.setName(rentalRequest.getName());
+//        rental.setSurface(rentalRequest.getSurface());
+//        rental.setPrice(rentalRequest.getPrice());
+//        rental.setDescription(rentalRequest.getDescription());
+//
+//        // Gestion de l'image si une nouvelle image est envoyée
+//        if (rentalRequest.getPicture() != null && !rentalRequest.getPicture().isEmpty()) {
+//            String picturePath = fileStorageService.saveFile(rentalRequest.getPicture());
+//            rental.setPicture(picturePath);
+//        }
+//
 
-        // Gestion de l'image si une nouvelle image est envoyée
-        if (rentalRequest.getPicture() != null && !rentalRequest.getPicture().isEmpty()) {
-            String picturePath = fileStorageService.saveFile(rentalRequest.getPicture());
-            rental.setPicture(picturePath);
-        }
-
-        return rentalRepository.save(rental);
+        return null;
+    //return rentalRepository.save(rental);
     }
 
 }

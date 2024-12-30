@@ -9,9 +9,9 @@ import com.chatop.My_Chatop_Api.models.User; // import du model User
 public interface UserRepository extends JpaRepository<User, Long> {
 
     // MTHD DE JPAREPOSITORY POUR EVITER LES DOUBLONS
-    Boolean existsByEmail(String email);
+    boolean existsByEmail(String email);
 
     // MTHD DE JPAREPOSITORY
-    Optional<User> findByEmail(String email);
+    User findByEmail(String email);
 
 }

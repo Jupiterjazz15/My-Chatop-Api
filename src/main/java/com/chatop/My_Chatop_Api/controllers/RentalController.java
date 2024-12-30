@@ -59,16 +59,11 @@ public class RentalController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Rental> getRentalById(@PathVariable Long id) {
-        // Appeler le service pour obtenir un Optional<Rental>
-        Optional<Rental> rentalOptional = rentalService.getRentalById(id);
-
-        // Vérifier si un Rental est présent dans l'Optional
-        if (rentalOptional.isEmpty()) {
+        Rental rental = rentalService.getRentalById(id);
+        if (rental == null) {
             return ResponseEntity.notFound().build();
         }
-
-        // Retourner le Rental trouvé
-        return ResponseEntity.ok(rentalOptional.get());
+        return ResponseEntity.ok(rental);
     }
 
     // put rental
