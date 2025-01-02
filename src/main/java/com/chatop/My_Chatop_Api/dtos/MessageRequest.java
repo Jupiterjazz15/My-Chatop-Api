@@ -5,30 +5,29 @@ import jakarta.validation.constraints.NotNull;
 
 public class MessageRequest {
 
-    @NotNull
     private Long rental_id;
-    @NotNull
     private Long user_id;
-    @NotBlank
     private String message;
 
-    // Getters et setters
-    public Long getRentalId() {
+    // Getter et Setter pour rental_id
+    public Long getRental_id() {
         return rental_id;
     }
 
-    public void setRentalId(Long rental_id) {
+    public void setRental_id(Long rental_id) {
         this.rental_id = rental_id;
     }
 
-    public Long getUserId() {
+    // Getter et Setter pour user_id
+    public Long getUser_id() {
         return user_id;
     }
 
-    public void setUserId(Long user_id) {
+    public void setUser_id(Long user_id) {
         this.user_id = user_id;
     }
 
+    // Getter et Setter pour message
     public String getMessage() {
         return message;
     }

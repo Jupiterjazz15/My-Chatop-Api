@@ -19,10 +19,10 @@ public class MessageService {
 
         Message messageToSave = new Message();
         messageToSave.setMessage(message.getMessage());
-        messageToSave.setUserId(message.getUserId());
-        messageToSave.setRentalId(message.getRentalId());
-        messageToSave.setCreatedAt(LocalDate.now());
-        messageToSave.setUpdatedAt(LocalDate.now());
+        messageToSave.setUser_id(message.getUser_id());
+        messageToSave.setRental_id(message.getRental_id());
+        messageToSave.setCreated_at(LocalDate.now());
+        messageToSave.setUpdated_at(LocalDate.now());
 
         return messageRepository.save(messageToSave);
     }

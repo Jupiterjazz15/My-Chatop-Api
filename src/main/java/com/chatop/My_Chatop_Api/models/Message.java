@@ -11,9 +11,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "messages")
+@Table(name = "MESSAGES")
 public class Message {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,31 +23,15 @@ public class Message {
     @JoinColumn(name = "user_id")
     private Long user_id;
 
-    @NotBlank
-    @Size(max = 1000)
-    @Column(nullable = false, length = 1000)
     private String message;
 
     @Column(name = "created_at", updatable = false)
-    private LocalDate createdAt; // Date de création du message
+    private LocalDate created_at;
 
     @Column(name = "updated_at")
-    private LocalDate updatedAt; // Date de mise à jour du message
+    private LocalDate updated_at;
 
-
-    // Constructeur par défaut (requis pour JPA)
-    public Message() {}
-
-    // Constructeur avec paramètres
-    public Message(Long rental_id, Long user_id, String message) {
-        this.rental_id = rental_id;
-        this.user_id = user_id;
-        this.message = message;
-
-    }
-
-    // Getters et Setters
-
+    // Getter et Setter pour id
     public Long getId() {
         return id;
     }
@@ -57,21 +40,25 @@ public class Message {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return user_id;
-    }
-
-    public void setUserId(Long user_id) {
-        this.user_id = user_id;
-    }
-
-    public Long getRentalId() {
+    // Getter et Setter pour rental_id
+    public Long getRental_id() {
         return rental_id;
     }
-    public void setRentalId(Long rental_id) {
+
+    public void setRental_id(Long rental_id) {
         this.rental_id = rental_id;
     }
 
+    // Getter et Setter pour user_id
+    public Long getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(Long user_id) {
+        this.user_id = user_id;
+    }
+
+    // Getter et Setter pour message
     public String getMessage() {
         return message;
     }
@@ -80,19 +67,21 @@ public class Message {
         this.message = message;
     }
 
-    public LocalDate getCreatedAt() {
-        return createdAt;
+    // Getter et Setter pour created_at
+    public LocalDate getCreated_at() {
+        return created_at;
     }
 
-    public void setCreatedAt(LocalDate createdAt) {
-        this.createdAt = createdAt;
+    public void setCreated_at(LocalDate created_at) {
+        this.created_at = created_at;
     }
 
-    public LocalDate getUpdatedAt() {
-        return updatedAt;
+    // Getter et Setter pour updated_at
+    public LocalDate getUpdated_at() {
+        return updated_at;
     }
 
-    public void setUpdatedAt(LocalDate updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setUpdated_at(LocalDate updated_at) {
+        this.updated_at = updated_at;
     }
 }

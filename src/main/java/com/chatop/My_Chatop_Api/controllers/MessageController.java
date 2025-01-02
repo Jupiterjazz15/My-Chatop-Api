@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("api/messages/")
+@RequestMapping("api")
 public class MessageController {
 
     MessageService messageService;
@@ -28,5 +28,6 @@ public class MessageController {
         }
 
     }
+
 
 }
