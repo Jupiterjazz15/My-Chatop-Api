@@ -26,5 +26,4 @@ public class MessageService {
 
         return messageRepository.save(messageToSave);
     }
-
 }

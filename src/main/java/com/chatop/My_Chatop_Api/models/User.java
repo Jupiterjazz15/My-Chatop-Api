@@ -11,47 +11,27 @@ import org.hibernate.annotations.UpdateTimestamp;  // annotation pr mettre à jo
 
 import java.time.LocalDate;
 
-@Entity // cette classe est une entitée JPA = elle sera mappée à une table
-@Table(name = "users")
+@Entity
+@Table(name = "USERS", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // valeur de id sera générée automatiquement via la stratégie d'incrémentation propre au SGBD
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
-    @Size(max = 20)
-    private String name;
-
-    @NotBlank
-    @Size(max = 50)
-    @Email
     private String email;
-
-    @NotBlank
-    @Size(max = 120)
-    @JsonIgnore
+    private String name;
     private String password;
 
-    @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd")
     private LocalDate createdAt;
 
-    @UpdateTimestamp
     @Column(name = "updated_at")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy/MM/dd")
     private LocalDate updatedAt;
 
-    // CONSTRUCTEUR SANS ARGUMENT : utile pr JPA et les frameworks (Hibernate) pr de créer une instance de la classe
-    public User() {}
-
-    // CONSTRUCTEUR CLASSIQUE
-    public User(String name, String email, String password) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-    }
+    // Getters et Setters
 
     public Long getId() {
         return id;
@@ -61,20 +41,20 @@ public class User {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPassword() {
@@ -89,16 +69,16 @@ public class User {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDate created_at) {
-        this.createdAt = created_at;
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
     }
 
     public LocalDate getUpdatedAt() {
         return updatedAt;
     }
-    public void setUpdatedAt(LocalDate updated_at) {
-        this.updatedAt = updated_at;
-    }
 
+    public void setUpdatedAt(LocalDate updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
 }

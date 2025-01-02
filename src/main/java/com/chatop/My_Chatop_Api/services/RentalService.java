@@ -1,9 +1,10 @@
 package com.chatop.My_Chatop_Api.services;
 
 import com.chatop.My_Chatop_Api.dtos.RentalRequest;
-import com.chatop.My_Chatop_Api.dtos.User.UserResponse;
+import com.chatop.My_Chatop_Api.dtos.User.UserDto;
 import com.chatop.My_Chatop_Api.models.Rental;
 import com.chatop.My_Chatop_Api.repositories.RentalRepository;
+import com.chatop.My_Chatop_Api.tools.FileUploadUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
@@ -25,10 +26,6 @@ public class RentalService {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private FileStorageService fileStorageService;
-
-    // Méthode qui prend un DTO pour construire un objet Rental, sauvegarder l'image, récupérer les infos de l'utilisateur authentifié, ajouter un createdAt
     public Rental saveRental(RentalRequest rental) throws IOException {
         Rental rentalToSave = new Rental();
         rentalToSave.setName(rental.getName());
@@ -36,51 +33,44 @@ public class RentalService {
         rentalToSave.setDescription(rental.getDescription());
         rentalToSave.setSurface(rental.getSurface());
 
-        // Sauvegarder le fichier image
-        String picturePath = fileStorageService.saveFile(rental.getPicture());
-        rentalToSave.setPicture(picturePath);
+        String picturePath = FileUploadUtils.saveFile(rental.getPicture());
 
-        // Dates de création et mise à jour
-        rentalToSave.setCreatedAt(LocalDate.now());
-        rentalToSave.setUpdatedAt(LocalDate.now());
+        rentalToSave.setPicture(picturePath);
+        rentalToSave.setCreated_at(LocalDate.now());
+        rentalToSave.setUpdated_at(LocalDate.now());
 
         // Récupérer l'objet Authentication depuis le SecurityContext
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        // Vérifier que l'utilisateur est authentifié
         if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
             return null; // Retourner une erreur 401 si non authentifié
         }
 
         // Extraire les détails de l'utilisateur
         Jwt jwt = (Jwt) authentication.getPrincipal();
+
         String email = jwt.getClaim("email");
-
         // Récupérer l'utilisateur à partir du service
-        UserResponse user = userService.getUserByEmail(email);
+        UserDto user = userService.getUserByEmail(email);
 
-        // Assigner l'ID de l'utilisateur authentifié comme propriétaire
-        rentalToSave.setOwnerId(user.getId());
+        rentalToSave.setOwner_id(user.getId());
 
-        // Sauvegarder la location
+        rentalToSave.setCreated_at(LocalDate.now());
+        rentalToSave.setUpdated_at(LocalDate.now());
+
         return rentalRepository.save(rentalToSave);
     }
 
-    // Méthode pour récupérer toutes les locations
-    public List<Rental> getAllRentals() {
+    public List<Rental> getRentals() {
         return rentalRepository.findAll();
     }
 
-    // Méthode pour récupérer une location par son ID
-    public Rental getRentalById(Long id) {
+    public Rental getRental(Long id) {
         return rentalRepository.findById(id).orElse(null);
     }
 
-    // Méthode pour mettre à jour une location
-    public Rental updateRental(Long id, RentalRequest rentalRequest) throws IOException {
+    public Rental updateRental(Long id, RentalRequest rental) throws IOException {
         Rental rentalToUpdate = rentalRepository.findById(id).orElse(null);
-
-        // Vérifier si la location existe
         if (rentalToUpdate == null) {
             return null;
         }
@@ -88,39 +78,28 @@ public class RentalService {
         // Récupérer l'objet Authentication depuis le SecurityContext
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        // Vérifier que l'utilisateur est authentifié
         if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
             return null; // Retourner une erreur 401 si non authentifié
         }
 
         // Extraire les détails de l'utilisateur
         Jwt jwt = (Jwt) authentication.getPrincipal();
+
         String email = jwt.getClaim("email");
-
         // Récupérer l'utilisateur à partir du service
-        UserResponse user = userService.getUserByEmail(email);
+        UserDto user = userService.getUserByEmail(email);
 
-        // Vérifier que l'utilisateur est le propriétaire de la location
-        if (!rentalToUpdate.getOwnerId().equals(user.getId())) {
-            throw new AccessDeniedException("User is not authorized to update this rental"); // Lever une exception si non autorisé
+        if (!rentalToUpdate.getOwner_id().equals(user.getId()) ) {
+            throw new AccessDeniedException("User is not authorized"); // Lever une exception standard pour retourner 401/403
         }
 
-        // Mettre à jour les informations de la location
-        rentalToUpdate.setName(rentalRequest.getName());
-        rentalToUpdate.setSurface(rentalRequest.getSurface());
-        rentalToUpdate.setPrice(rentalRequest.getPrice());
-        rentalToUpdate.setDescription(rentalRequest.getDescription());
+        rentalToUpdate.setName(rental.getName());
+        rentalToUpdate.setPrice(rental.getPrice());
+        rentalToUpdate.setDescription(rental.getDescription());
+        rentalToUpdate.setSurface(rental.getSurface());
+        rentalToUpdate.setUpdated_at(LocalDate.now());
 
-        // Gestion de l'image si une nouvelle image est envoyée
-        if (rentalRequest.getPicture() != null && !rentalRequest.getPicture().isEmpty()) {
-            String picturePath = fileStorageService.saveFile(rentalRequest.getPicture());
-            rentalToUpdate.setPicture(picturePath);
-        }
-
-        // Mettre à jour la date de mise à jour
-        rentalToUpdate.setUpdatedAt(LocalDate.now());
-
-        // Sauvegarder les changements
         return rentalRepository.save(rentalToUpdate);
     }
+
 }

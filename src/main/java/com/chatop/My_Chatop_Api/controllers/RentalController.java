@@ -12,10 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 
 @RestController
@@ -30,8 +28,8 @@ public class RentalController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, String>> createRental(    @RequestParam("name") String name,
-                                                                @RequestParam("surface") BigDecimal surface,
-                                                                @RequestParam("price") BigDecimal price,
+                                                                @RequestParam("surface") Double surface,
+                                                                @RequestParam("price") Double price,
                                                                 @RequestParam("description") String description,
                                                                 @RequestParam("picture") MultipartFile picture) throws IOException {
 
@@ -52,14 +50,14 @@ public class RentalController {
     }
 
     @GetMapping()
-    public Map<String, List<Rental>> getAllRentals() {
-        List<Rental> rentals = rentalService.getAllRentals();
+    public Map<String, List<Rental>> getRentals() {
+        List<Rental> rentals = rentalService.getRentals();
         return Map.of("rentals", rentals);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Rental> getRentalById(@PathVariable Long id) {
-        Rental rental = rentalService.getRentalById(id);
+    public ResponseEntity<Rental> getRental(@PathVariable Long id) {
+        Rental rental = rentalService.getRental(id);
         if (rental == null) {
             return ResponseEntity.notFound().build();
         }
@@ -79,6 +77,5 @@ public class RentalController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", ex.getMessage()));
         }
     }
-
 
 }

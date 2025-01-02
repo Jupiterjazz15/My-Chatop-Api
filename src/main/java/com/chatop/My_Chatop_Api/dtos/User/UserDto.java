@@ -3,7 +3,7 @@ package com.chatop.My_Chatop_Api.dtos.User;
 import java.time.LocalDate;
 
 // DTO POUR TRANSPORTER LES DONNÉES USER QUE L'API RENVOIE EN REPONSE (COMME LES INFOS D'UN USER)
-public class UserResponse {
+public class UserDto {
 
     // ATTRIBUTS
     Long id;
@@ -13,10 +13,10 @@ public class UserResponse {
     LocalDate updatedAt;
 
     // CONSTRUCTEUR PAR DÉFAUT : Nécessaire pr permettre à des frameworks (comme Jackson) de créer une instance sans fournir immédiatement de valeurs aux attributs.
-    public UserResponse() {}
+    public UserDto() {}
 
     // CONSTRUCTEUR AVEC INITIALISATION DES PARAMÈTRES :
-    public UserResponse(Long id, String name, String email,LocalDate createdAt, LocalDate updatedAt) {
+    public UserDto(Long id, String name, String email, LocalDate createdAt, LocalDate updatedAt) {
         this.id = id;
         this.name = name;
         this.email = email;

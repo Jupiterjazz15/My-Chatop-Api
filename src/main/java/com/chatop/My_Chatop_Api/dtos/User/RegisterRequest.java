@@ -3,7 +3,7 @@ package com.chatop.My_Chatop_Api.dtos.User;
 import jakarta.validation.constraints.*;// Import des annotations pour la validation des champs.
 
 // DTO POUR TRANSPORTER LES DONNES D'INSCRIPTION ENVOYÉES PAR UN USER (PREMIERE CONNEXION)
-public class SignUpRequest {
+public class RegisterRequest {
     // ATTRIBUTS
     @NotBlank
     @Size(min = 3, max = 20)

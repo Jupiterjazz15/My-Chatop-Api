@@ -1,8 +1,8 @@
 package com.chatop.My_Chatop_Api.controllers;
 
 import com.chatop.My_Chatop_Api.dtos.User.LoginRequest;
-import com.chatop.My_Chatop_Api.dtos.User.SignUpRequest;
-import com.chatop.My_Chatop_Api.dtos.User.UserResponse;
+import com.chatop.My_Chatop_Api.dtos.User.RegisterRequest;
+import com.chatop.My_Chatop_Api.dtos.User.UserDto;
 import com.chatop.My_Chatop_Api.services.JWTService;
 import com.chatop.My_Chatop_Api.services.UserService;
 import jakarta.validation.Valid;
@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+
 @RestController
 @RequestMapping("api/auth")
 public class LoginController {
+
     private JWTService jwtService;
 
     private UserService userService;
@@ -37,19 +39,20 @@ public class LoginController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String, String>> register(@Valid @RequestBody SignUpRequest signUpRequest) {
+    public ResponseEntity<Map<String, String>> register(@Valid @RequestBody RegisterRequest registerRequest) {
         // Vérifier si l'utilisateur existe déjà
-        if (userService.saveUser(signUpRequest) == null) {
+        if (userService.saveUser(registerRequest) == null) {
             return ResponseEntity.badRequest().body(Map.of("message", "User already exists"));
         }
 
-        String token = jwtService.generateToken(signUpRequest.getEmail());
+        String token = jwtService.generateToken(registerRequest.getEmail());
 
         // Retourner le token JWT dans la réponse
         return ResponseEntity.ok(Map.of("token", token));
     }
+
     @GetMapping("/me")
-    public ResponseEntity<UserResponse> getCurrentUser() {
+    public ResponseEntity<UserDto> getCurrentUser() {
         // Récupérer l'objet Authentication depuis le SecurityContext
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -62,7 +65,7 @@ public class LoginController {
 
         String email = jwt.getClaim("email");
         // Récupérer l'utilisateur à partir du service
-        UserResponse user = userService.getUserByEmail(email);
+        UserDto user = userService.getUserByEmail(email);
 
         if (user == null) {
             return ResponseEntity.status(404).build(); // Retourner une erreur 404 si l'utilisateur n'est pas trouvé
@@ -70,5 +73,6 @@ public class LoginController {
 
         return ResponseEntity.ok(user);
     }
+
 
 }

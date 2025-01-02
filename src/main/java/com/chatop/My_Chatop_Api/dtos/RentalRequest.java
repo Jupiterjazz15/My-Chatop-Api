@@ -2,13 +2,12 @@ package com.chatop.My_Chatop_Api.dtos;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import java.math.BigDecimal;
 
 public class RentalRequest {
 
     private String name;
-    private BigDecimal surface;
-    private BigDecimal price;
+    private Double surface;
+    private Double price;
     private String description;
     private MultipartFile picture;
 
@@ -20,19 +19,19 @@ public class RentalRequest {
         this.name = name;
     }
 
-    public BigDecimal getSurface() {
+    public Double getSurface() {
         return surface;
     }
 
-    public void setSurface(BigDecimal surface) {
+    public void setSurface(Double surface) {
         this.surface = surface;
     }
 
-    public BigDecimal getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 

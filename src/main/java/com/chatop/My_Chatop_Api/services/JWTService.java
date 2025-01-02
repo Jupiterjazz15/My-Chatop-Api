@@ -15,8 +15,6 @@ import java.time.temporal.ChronoUnit;
 @Service
 public class JWTService {
 
-
-
     private JwtEncoder jwtEncoder;
 
     public JWTService(JwtEncoder jwtEncoder) {
