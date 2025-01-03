@@ -4,6 +4,7 @@ import com.chatop.My_Chatop_Api.dtos.MessageRequest;
 import com.chatop.My_Chatop_Api.services.MessageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
