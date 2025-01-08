@@ -68,7 +68,7 @@ Front-end
 Étape 1 : Cloner le dépôt
 
 > git clone https://github.com/Jupiterjazz15/My-Chatop-Api.git
-> 
+
 > cd Chatop-Api
 
 Étape 2 : Configurer la base de données MySQL
@@ -82,18 +82,20 @@ Créez une base de données nommée new_location_db :
 Vérifiez les identifiants de connexion dans le fichier application.properties :
 
 >spring.datasource.url=jdbc:mysql://localhost:3306/new_location_db
-spring.datasource.username=your_username
-spring.datasource.password=your_password
+>
+>spring.datasource.username=your_username
+> 
+>spring.datasource.password=your_password
 
 Étape 3 : Installer les dépendances
 
 >mvn clean install
 
-Étape 4 : Démarrer le serveur
+Étape 5 : Démarrer le serveur
 
 >mvn spring-boot:run
 
-Étape 5 : Vérifier l'installation en lançant le serveur à cette adresse http://localhost:8080
+Étape 5 : Vérifier l'installation en lançant le serveur à cette adresse http://localhost:9090
 
 
 ### Installation du Front-end

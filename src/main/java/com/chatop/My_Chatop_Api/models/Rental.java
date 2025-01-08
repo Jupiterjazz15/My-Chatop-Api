@@ -17,7 +17,7 @@ public class Rental {
     private String picture;
     private String description;
 
-    @Column(name = "owner_id", nullable = false)
+    @JoinColumn(name = "owner_id", nullable = false)
     private Long owner_id;
 
     @Column(name = "created_at", updatable = false)

@@ -15,8 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    // Injection par constructeur
+    private final UserService userService; // final pour garantir l'immutabilité
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @Operation(summary = "Récupérer un utilisateur par son ID")
     @GetMapping("/user/{id}")

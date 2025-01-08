@@ -55,9 +55,6 @@ public class RentalService {
 
         rentalToSave.setOwner_id(user.getId());
 
-        rentalToSave.setCreated_at(LocalDate.now());
-        rentalToSave.setUpdated_at(LocalDate.now());
-
         return rentalRepository.save(rentalToSave);
     }
 
@@ -70,7 +67,7 @@ public class RentalService {
     }
 
     public Rental updateRental(Long id, RentalRequest rental) throws IOException {
-        Rental rentalToUpdate = rentalRepository.findById(id).orElse(null);
+        Rental rentalToUpdate = getRental(id);
         if (rentalToUpdate == null) {
             return null;
         }

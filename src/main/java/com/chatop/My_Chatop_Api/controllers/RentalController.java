@@ -77,11 +77,15 @@ public class RentalController {
             @Parameter(description = "Détails de la location à mettre à jour") @Valid @ModelAttribute RentalRequest rental) throws IOException {
         try {
             Rental updatedRental = rentalService.updateRental(id, rental);
+            // Gérer le cas où la location est introuvable
             if (updatedRental == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "User not authorized or rental not found"));
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Rental not found"));
             }
             return ResponseEntity.ok(Map.of("message", "Rental updated!"));
+
+            // Gérer le cas où l'utilisateur n'est pas autorisé
         } catch (AccessDeniedException ex) {
+            // Gérer le cas où l'utilisateur n'est pas autorisé
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", ex.getMessage()));
         }
     }
