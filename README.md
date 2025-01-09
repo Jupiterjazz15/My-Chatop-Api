@@ -129,6 +129,10 @@ Remplacez le port dans chaque fichier en mettant 9090.
 
 Accédez à l'application à cette adresse :http://localhost:4200
 
+## URL Swagger 
+
+http://localhost:9090/swagger-ui/index.html
+
 ## Auteur
 
 Coralie Haller
